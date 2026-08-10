@@ -10,10 +10,22 @@
   --color-line: #e5e5e2;
   --color-accent: #111111;
   --color-success: #2f7d4a;
+  --color-danger: #b3261e;
 
   --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space-grotesk), var(--font-dm-sans), sans-serif;
   --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  --animate-marquee: marquee 32s linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-33.333%);
+    }
+  }
 }
 
 @layer base {
