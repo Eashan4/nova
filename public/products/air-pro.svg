@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none" role="img" aria-label="Nova Air Pro">
+  <defs>
+    <radialGradient id="halo" cx="50%" cy="42%" r="55%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="shell" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#43434A"/>
+      <stop offset="55%" stop-color="#242429"/>
+      <stop offset="100%" stop-color="#141417"/>
+    </linearGradient>
+    <linearGradient id="pad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1B1B1F"/>
+      <stop offset="100%" stop-color="#0C0C0E"/>
+    </linearGradient>
+    <radialGradient id="cush" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#2E2E34"/>
+      <stop offset="100%" stop-color="#131316"/>
+    </radialGradient>
+  </defs>
+  <circle cx="400" cy="330" r="240" fill="url(#halo)"/>
+  <ellipse cx="400" cy="660" rx="235" ry="26" fill="#111111" opacity="0.11"/>
+  <path d="M 258 405 C 258 180, 542 180, 542 405" stroke="url(#shell)" stroke-width="38" stroke-linecap="round"/>
+  <path d="M 258 405 C 258 205, 542 205, 542 405" stroke="#FFFFFF" stroke-opacity="0.10" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 26"/>
+  <rect x="212" y="326" width="88" height="172" rx="40" fill="url(#shell)"/>
+  <rect x="500" y="326" width="88" height="172" rx="40" fill="url(#shell)"/>
+  <rect x="212" y="326" width="88" height="172" rx="40" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="2"/>
+  <rect x="500" y="326" width="88" height="172" rx="40" stroke="#FFFFFF" stroke-opacity="0.08" stroke-width="2"/>
+  <circle cx="256" cy="414" r="46" fill="url(#cush)"/>
+  <circle cx="544" cy="414" r="46" fill="url(#cush)"/>
+  <circle cx="256" cy="414" r="46" stroke="#000000" stroke-opacity="0.35" stroke-width="10"/>
+  <circle cx="544" cy="414" r="46" stroke="#000000" stroke-opacity="0.35" stroke-width="10"/>
+</svg>
