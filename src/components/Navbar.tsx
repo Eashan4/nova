@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react"
 import { useStore } from "@/StoreContext"
 import { storeInfo } from "@/data"
+import { CartDrawer } from "@/components/CartDrawer"
 import { cn } from "@/components/ui"
 
 const links = [
@@ -204,6 +205,8 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      <CartDrawer />
     </>
   )
 }
