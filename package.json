@@ -1,6 +1,8 @@
 {
   "name": "nova",
   "version": "0.1.0",
+  "description": "NOVA — a premium consumer-electronics e-commerce storefront (audio, wearables, power, smart home) built with Next.js 15, React 19, and Tailwind CSS v4.",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev",

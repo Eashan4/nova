@@ -11,6 +11,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-EF0055?logo=framer&logoColor=white)](https://www.framer.com/motion/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 </div>
 
@@ -26,6 +27,7 @@ Monochrome design system, studio-style SVG product renders, INR pricing. Fronten
 - [Customisation](#customisation)
 - [Deploy on EC2](#deploy-on-ec2-ubuntu-2204-node-20)
 - [Notes](#notes)
+- [License](#license)
 
 ## Run locally
 
@@ -166,3 +168,7 @@ Point the instance's public IP at the server. For HTTPS, add a domain + `certbot
 
 - All prices in INR (`en-IN` locale). Demo site — checkout does not process payments.
 - No environment variables required.
+
+## License
+
+MIT © [eashan4](https://github.com/Eashan4) — see [LICENSE](LICENSE) for details.
