@@ -1,0 +1,17 @@
+# Original (pre-hardening) Nova deployment spec - used only as the Trivy "before" baseline
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nova
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: nova }
+  template:
+    metadata:
+      labels: { app: nova }
+    spec:
+      containers:
+      - name: nova
+        image: ramdev23/nova:v1
+        ports: [{ containerPort: 3000 }]

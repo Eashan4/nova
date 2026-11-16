@@ -1,0 +1,40 @@
+# Hardened Nova deployment (PBL-3 Exp 9 - DevSecOps)
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nova
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: nova }
+  template:
+    metadata:
+      labels: { app: nova, compliance: hipaa }
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+      - name: nova
+        image: ramdev23/nova:v1
+        ports: [{ containerPort: 3000 }]
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities: { drop: ["ALL"] }
+        resources:
+          requests: { cpu: 100m, memory: 128Mi }
+          limits:   { cpu: 500m, memory: 512Mi }
+        readinessProbe: { httpGet: { path: /, port: 3000 }, initialDelaySeconds: 5, periodSeconds: 10 }
+        livenessProbe:  { httpGet: { path: /, port: 3000 }, initialDelaySeconds: 15, periodSeconds: 20 }
+        volumeMounts:
+        - { name: tmp,   mountPath: /tmp }
+        - { name: cache, mountPath: /app/.next/cache }
+        - { name: npm,   mountPath: /home/node/.npm }
+      volumes:
+      - { name: tmp,   emptyDir: {} }
+      - { name: cache, emptyDir: {} }
+      - { name: npm,   emptyDir: {} }

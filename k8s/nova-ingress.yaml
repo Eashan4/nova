@@ -1,0 +1,13 @@
+# Public entry point: http://<EC2 public IP>/  (Traefik on port 80) -> nova service
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nova
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: { name: nova, port: { number: 80 } }
