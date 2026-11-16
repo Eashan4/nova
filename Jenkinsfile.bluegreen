@@ -1,0 +1,51 @@
+// PBL-3 Exp 8: automated blue-green deployment / rollback via the nova-bg service selector
+pipeline {
+  agent any
+  options { timestamps() }
+  parameters {
+    string(name: 'IMAGE', defaultValue: 'ramdev23/nova:v2', description: 'Image rolled out to the idle colour')
+    choice(name: 'ACTION', choices: ['DEPLOY_AND_SWITCH', 'ROLLBACK'], description: 'ROLLBACK just flips traffic back to the other colour')
+  }
+  stages {
+    stage('Detect colours') {
+      steps {
+        script {
+          env.ACTIVE = sh(returnStdout: true, script: "kubectl get svc nova-bg -o jsonpath='{.spec.selector.color}'").trim()
+          env.IDLE   = (env.ACTIVE == 'blue') ? 'green' : 'blue'
+          echo "ACTIVE=${env.ACTIVE}  IDLE=${env.IDLE}  ACTION=${params.ACTION}"
+        }
+      }
+    }
+    stage('Deploy to idle colour') {
+      when { expression { params.ACTION == 'DEPLOY_AND_SWITCH' } }
+      steps {
+        sh 'kubectl set image deployment/nova-$IDLE nova=$IMAGE'
+        sh 'kubectl rollout status deployment/nova-$IDLE --timeout=240s'
+      }
+    }
+    stage('Smoke test idle colour') {
+      steps {
+        sh '''IP=$(kubectl get pods -l app=nova-$IDLE --field-selector=status.phase=Running -o jsonpath="{.items[0].status.podIP}")
+              curl -fsS -o /dev/null -w "idle ($IDLE) pod $IP -> HTTP %{http_code}\\n" http://$IP:3000/'''
+      }
+    }
+    stage('Switch traffic') {
+      steps {
+        sh '''kubectl patch svc nova-bg -p "{\\"spec\\":{\\"selector\\":{\\"app\\":\\"nova-$IDLE\\",\\"color\\":\\"$IDLE\\"}}}"
+              kubectl get svc nova-bg -o wide
+              kubectl get endpoints nova-bg'''
+      }
+    }
+    stage('Verify') {
+      steps {
+        sh '''ok=0; bad=0
+              for i in $(seq 1 20); do c=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:32361/); [ "$c" = 200 ] && ok=$((ok+1)) || bad=$((bad+1)); sleep 0.2; done
+              echo "post-switch probe: HTTP 200=$ok failed=$bad"; [ "$bad" = 0 ]'''
+      }
+    }
+  }
+  post {
+    success { echo "Traffic now served by ${env.IDLE}" }
+    failure { sh 'kubectl patch svc nova-bg -p "{\\"spec\\":{\\"selector\\":{\\"app\\":\\"nova-$ACTIVE\\",\\"color\\":\\"$ACTIVE\\"}}}" || true' }
+  }
+}
