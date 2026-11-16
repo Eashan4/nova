@@ -1,0 +1,14 @@
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get deployment nova-green -o wide
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                  SELECTOR
+nova-green   2/2     2            2           10d   nova         ramdev23/nova:build-2   app=nova-green
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get pods -l color=green -o wide
+NAME                          READY   STATUS    RESTARTS   AGE     IP           NODE                            NOMINATED NODE   READINESS GATES
+nova-green-5c79f6b4f8-b6jsx   1/1     Running   0          2m54s   10.42.0.50   ip-172-31-19-108.ec2.internal   <none>           <none>
+nova-green-5c79f6b4f8-lnppq   1/1     Running   0          2m54s   10.42.0.51   ip-172-31-19-108.ec2.internal   <none>           <none>
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get deployments nova-blue nova-green
+NAME         READY   UP-TO-DATE   AVAILABLE   AGE
+nova-blue    2/2     2            2           10d
+nova-green   2/2     2            2           10d
+

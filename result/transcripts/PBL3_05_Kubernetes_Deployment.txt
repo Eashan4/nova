@@ -1,0 +1,18 @@
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get deployment nova -o wide
+NAME   READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                  SELECTOR
+nova   1/1     1            1           10d   nova         ramdev23/nova:build-2   app=nova
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl rollout status deployment/nova
+deployment "nova" successfully rolled out
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get pods -l app=nova -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                            NOMINATED NODE   READINESS GATES
+nova-5d46b6dfd-rwmd5   1/1     Running   0          3m31s   10.42.0.49   ip-172-31-19-108.ec2.internal   <none>           <none>
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get svc nova -o wide
+NAME   TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+nova   NodePort   10.43.139.55   <none>        80:32456/TCP   10d   app=nova
+
+[ec2-user@ip-172-31-19-108 ~]$ curl -s -o /dev/null -w 'Nova site via NodePort 32456 -> HTTP %{http_code}\n' http://localhost:32456
+Nova site via NodePort 32456 -> HTTP 200
+

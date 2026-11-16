@@ -1,0 +1,28 @@
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get deploy nova -o jsonpath='{.spec.template.spec.securityContext}{"\n"}{.spec.template.spec.containers[0].securityContext}{"\n"}{.spec.template.spec.containers[0].resources}{"\n"}'
+{"runAsGroup":1000,"runAsNonRoot":true,"runAsUser":1000,"seccompProfile":{"type":"RuntimeDefault"}}
+{"allowPrivilegeEscalation":false,"capabilities":{"drop":["ALL"]},"readOnlyRootFilesystem":true}
+{"limits":{"cpu":"500m","memory":"512Mi"},"requests":{"cpu":"100m","memory":"128Mi"}}
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl exec deploy/nova -- id
+uid=1000(node) gid=1000(node) groups=1000(node)
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl exec deploy/nova -- sh -c 'touch /app/x 2>&1 | head -1'
+touch: /app/x: Read-only file system
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get networkpolicy; kubectl get role patient-data-reader -o jsonpath='{.rules}{"\n"}'
+NAME                    POD-SELECTOR                AGE
+allow-traefik-to-nova   app=nova,compliance=hipaa   9m25s
+hipaa-isolation         compliance=hipaa            10d
+[{"apiGroups":[""],"resources":["secrets"],"verbs":["get"]}]
+
+[ec2-user@ip-172-31-19-108 ~]$ cd ~/nova && echo 'BEFORE (k8s/nova-baseline.yaml):' && trivy config -q k8s/nova-baseline.yaml | grep -E '^(Tests|Failures):'; echo 'AFTER (k8s/nova-secure.yaml):' && trivy config -q k8s/nova-secure.yaml | grep -E '^(Tests|Failures):'
+BEFORE (k8s/nova-baseline.yaml):
+Tests: 99 (SUCCESSES: 81, FAILURES: 18)
+Failures: 18 (UNKNOWN: 0, LOW: 11, MEDIUM: 4, HIGH: 3, CRITICAL: 0)
+AFTER (k8s/nova-secure.yaml):
+Tests: 98 (SUCCESSES: 94, FAILURES: 4)
+Failures: 4 (UNKNOWN: 0, LOW: 3, MEDIUM: 1, HIGH: 0, CRITICAL: 0)
+
+[ec2-user@ip-172-31-19-108 ~]$ curl -s -o /dev/null -w 'Secured Nova (build-2) -> HTTP %{http_code}\n' http://localhost:32456
+Secured Nova (build-2) -> HTTP 200
+

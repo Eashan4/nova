@@ -1,0 +1,18 @@
+# Docker image pushed to Docker Hub by Jenkins (nova-cicd #2, stage 'Push to Docker Hub')
+   ... (15 lines of verbose output omitted)
+[05:41:25] 032794e1e027: Pushed
+[05:41:25] 739e80b70a25: Pushed
+[05:41:25] b7c39c6c28cd: Pushed
+[05:41:25] afa543f85b46: Layer already exists
+[05:41:25] e10358715ead: Layer already exists
+[05:41:25] 4983b93ee796: Layer already exists
+[05:41:25] 29df493baa13: Layer already exists
+[05:41:28] 5da2893fef3e: Pushed
+[05:41:50] 5155cf233d1c: Pushed
+[05:41:50] build-2: digest: sha256:a29d85431834a15e55387d9315432bf336ea14548359d6de6e6f291d4aedc04c size: 2204
+
+
+$ curl https://hub.docker.com/v2/repositories/ramdev23/nova/tags   (Docker Hub)
+  ramdev23/nova:build-2   last_updated=2026-11-16T05:41:49.483381Z  size=165 MB
+  ramdev23/nova:v2        last_updated=2026-11-05T07:46:56.3219Z  size=165 MB
+  ramdev23/nova:v1        last_updated=2026-11-05T07:39:59.211333Z  size=165 MB

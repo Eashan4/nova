@@ -1,0 +1,34 @@
+# Jenkins job: nova-bluegreen  build #1  ACTION=DEPLOY_AND_SWITCH  IMAGE=ramdev23/nova:build-2  (blue -> green)
+Started by user Eashan Jain
+Running on Jenkins in /var/lib/jenkins/workspace/nova-bluegreen
+
+=== Stage: Detect colours ===
+[05:42:41] + kubectl get svc nova-bg -o 'jsonpath={.spec.selector.color}'
+[05:42:41] ACTIVE=blue  IDLE=green  ACTION=DEPLOY_AND_SWITCH
+
+=== Stage: Deploy to idle colour ===
+   ... (7 lines of verbose output omitted)
+[05:42:43] Waiting for deployment "nova-green" rollout to finish: 1 old replicas are pending termination...
+[05:42:44] Waiting for deployment "nova-green" rollout to finish: 1 old replicas are pending termination...
+[05:42:44] deployment "nova-green" successfully rolled out
+
+=== Stage: Smoke test idle colour ===
+   ... (1 lines of verbose output omitted)
+[05:42:45] + IP=10.42.0.50
+[05:42:45] + curl -fsS -o /dev/null -w 'idle (green) pod 10.42.0.50 -> HTTP %{http_code}\n' http://10.42.0.50:3000/
+[05:42:46] idle (green) pod 10.42.0.50 -> HTTP 200
+
+=== Stage: Switch traffic ===
+   ... (6 lines of verbose output omitted)
+[05:42:47] Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+[05:42:47] NAME      ENDPOINTS                         AGE
+[05:42:47] nova-bg   10.42.0.50:3000,10.42.0.51:3000   10d
+
+=== Stage: Verify ===
+[05:42:47] ++ seq 1 20
+[05:42:51] + echo 'post-switch probe: HTTP 200=20 failed=0'
+[05:42:51] post-switch probe: HTTP 200=20 failed=0
+
+=== Stage: Declarative: Post Actions ===
+[05:42:51] Traffic now served by green
+Finished: SUCCESS

@@ -1,0 +1,31 @@
+# Jenkins job: nova-bluegreen  build #2  ACTION=ROLLBACK  (green -> blue)
+Started by user Eashan Jain
+Running on Jenkins in /var/lib/jenkins/workspace/nova-bluegreen
+
+=== Stage: Detect colours ===
+[05:43:05] + kubectl get svc nova-bg -o 'jsonpath={.spec.selector.color}'
+[05:43:05] ACTIVE=green  IDLE=blue  ACTION=ROLLBACK
+
+=== Stage: Deploy to idle colour ===
+Stage "Deploy to idle colour" skipped due to when conditional
+
+=== Stage: Smoke test idle colour ===
+   ... (1 lines of verbose output omitted)
+[05:43:06] + IP=10.42.0.44
+[05:43:06] + curl -fsS -o /dev/null -w 'idle (blue) pod 10.42.0.44 -> HTTP %{http_code}\n' http://10.42.0.44:3000/
+[05:43:06] idle (blue) pod 10.42.0.44 -> HTTP 200
+
+=== Stage: Switch traffic ===
+   ... (6 lines of verbose output omitted)
+[05:43:06] Warning: v1 Endpoints is deprecated in v1.33+; use discovery.k8s.io/v1 EndpointSlice
+[05:43:06] NAME      ENDPOINTS                         AGE
+[05:43:06] nova-bg   10.42.0.44:3000,10.42.0.45:3000   10d
+
+=== Stage: Verify ===
+[05:43:07] ++ seq 1 20
+[05:43:11] + echo 'post-switch probe: HTTP 200=20 failed=0'
+[05:43:11] post-switch probe: HTTP 200=20 failed=0
+
+=== Stage: Declarative: Post Actions ===
+[05:43:11] Traffic now served by blue
+Finished: SUCCESS

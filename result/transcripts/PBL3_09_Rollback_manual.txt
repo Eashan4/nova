@@ -1,0 +1,30 @@
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get svc nova-bg -o wide
+NAME      TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+nova-bg   NodePort   10.43.203.80   <none>        80:32361/TCP   10d   app=nova-green,color=green
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get endpoints nova-bg 2>/dev/null
+NAME      ENDPOINTS                         AGE
+nova-bg   10.42.0.43:3000,10.42.0.47:3000   10d
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl patch svc nova-bg -p '{"spec":{"selector":{"app":"nova-blue","color":"blue"}}}'
+service/nova-bg patched
+
+[ec2-user@ip-172-31-19-108 ~]$ cat /tmp/probe.out
+traffic probe during switch: HTTP 200 = 60, failed = 0
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get svc nova-bg -o wide
+NAME      TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE   SELECTOR
+nova-bg   NodePort   10.43.203.80   <none>        80:32361/TCP   10d   app=nova-blue,color=blue
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get endpoints nova-bg 2>/dev/null
+NAME      ENDPOINTS                         AGE
+nova-bg   10.42.0.44:3000,10.42.0.45:3000   10d
+
+[ec2-user@ip-172-31-19-108 ~]$ kubectl get pods -l color=blue -o custom-columns=NAME:.metadata.name,IP:.status.podIP,IMAGE:.spec.containers[0].image
+NAME                         IP           IMAGE
+nova-blue-86c9fb5584-jw4zz   10.42.0.44   ramdev23/nova:v1
+nova-blue-86c9fb5584-p8mrn   10.42.0.45   ramdev23/nova:v1
+
+[ec2-user@ip-172-31-19-108 ~]$ curl -s -o /dev/null -w 'Nova via blue-green service :32361 -> HTTP %{http_code}\n' http://localhost:32361
+Nova via blue-green service :32361 -> HTTP 200
+

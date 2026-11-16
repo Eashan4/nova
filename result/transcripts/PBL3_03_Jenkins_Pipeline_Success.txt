@@ -1,0 +1,68 @@
+# Jenkins job: nova-cicd  build #2  -- console output (http://184.72.77.122:8080/job/nova-cicd/2/console)
+Started by user Eashan Jain
+Running on Jenkins in /var/lib/jenkins/workspace/nova-cicd
+
+=== Stage: Checkout ===
+[05:39:10] + rm -rf src
+[05:39:10] + git clone -q /home/ec2-user/nova src
+[05:39:10] Running in /var/lib/jenkins/workspace/nova-cicd/src
+[05:39:11] + git log --oneline -1
+[05:39:11] 94683d1 ci: clone source inside pipeline (Jenkins blocks local-dir SCM)
+
+=== Stage: Build Docker Image ===
+   ... (123 lines of verbose output omitted)
+[05:40:31] 
+[05:40:31] #15 [stage-1 6/6] COPY --from=builder /app/package.json ./package.json
+[05:40:31] #15 DONE 0.0s
+[05:40:31] 
+[05:40:31] #16 exporting to image
+[05:40:31] #16 exporting layers
+[05:40:43] #16 exporting layers 12.2s done
+[05:40:43] #16 writing image sha256:a95ceee2c9bb4e714388a50cbb4a50c0bc4e995cc605f58c84a64929c846047d done
+[05:40:43] #16 naming to docker.io/ramdev23/nova:build-2 done
+[05:40:43] #16 DONE 12.2s
+
+=== Stage: Security Scan (Trivy) ===
+[05:40:43] + trivy image -q --scanners vuln --severity HIGH,CRITICAL --exit-code 0 ramdev23/nova:build-2
+[05:41:22] ++ grep -c VulnerabilityID
+[05:41:22] ++ trivy image -q --scanners vuln --severity HIGH,CRITICAL --format json ramdev23/nova:build-2
+[05:41:22] + echo 'Trivy HIGH/CRITICAL findings: 39'
+[05:41:22] Trivy HIGH/CRITICAL findings: 39
+[05:41:22] Archiving artifacts
+
+=== Stage: Push to Docker Hub ===
+   ... (15 lines of verbose output omitted)
+[05:41:25] 032794e1e027: Pushed
+[05:41:25] 739e80b70a25: Pushed
+[05:41:25] b7c39c6c28cd: Pushed
+[05:41:25] afa543f85b46: Layer already exists
+[05:41:25] e10358715ead: Layer already exists
+[05:41:25] 4983b93ee796: Layer already exists
+[05:41:25] 29df493baa13: Layer already exists
+[05:41:28] 5da2893fef3e: Pushed
+[05:41:50] 5155cf233d1c: Pushed
+[05:41:50] build-2: digest: sha256:a29d85431834a15e55387d9315432bf336ea14548359d6de6e6f291d4aedc04c size: 2204
+
+=== Stage: Deploy to Kubernetes ===
+[05:41:51] + kubectl set image deployment/nova nova=ramdev23/nova:build-2
+[05:41:51] deployment.apps/nova image updated
+[05:41:51] + kubectl rollout status deployment/nova --timeout=240s
+[05:41:51] Waiting for deployment "nova" rollout to finish: 1 old replicas are pending termination...
+[05:42:13] Waiting for deployment "nova" rollout to finish: 1 old replicas are pending termination...
+[05:42:13] deployment "nova" successfully rolled out
+
+=== Stage: Verify ===
+[05:42:14] + kubectl get deployment nova -o wide
+[05:42:14] NAME   READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                  SELECTOR
+[05:42:14] nova   1/1     1            1           10d   nova         ramdev23/nova:build-2   app=nova
+[05:42:14] + kubectl get pods -l app=nova -o wide
+[05:42:14] NAME                   READY   STATUS    RESTARTS   AGE   IP           NODE                            NOMINATED NODE   READINESS GATES
+[05:42:14] nova-5d46b6dfd-rwmd5   1/1     Running   0          23s   10.42.0.49   ip-172-31-19-108.ec2.internal   <none>           <none>
+[05:42:14] + curl -fsS -o /dev/null -w 'Nova NodePort 32456 -> HTTP %{http_code}\n' http://localhost:32456
+[05:42:14] Nova NodePort 32456 -> HTTP 200
+
+=== Stage: Declarative: Post Actions ===
+[05:42:15] Deployed ramdev23/nova:build-2 to Kubernetes
+Finished: SUCCESS
+
+RESULT: SUCCESS   (build #2, 191 s)

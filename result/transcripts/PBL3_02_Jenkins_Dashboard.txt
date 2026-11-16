@@ -1,0 +1,11 @@
+# Jenkins (http://184.72.77.122:8080)  -- jobs and builds via REST API, logged in as admin
+Jenkins version  2.580.2
+
+JOB                BUILD    RESULT
+nova-cicd          #1       FAILURE   (0 s)
+nova-cicd          #2       SUCCESS   (191 s)
+nova-bluegreen     #1       SUCCESS   (13 s)
+nova-bluegreen     #2       SUCCESS   (7 s)
+
+Pipelines (Jenkinsfile in repo):  Jenkinsfile            CI/CD: checkout > build > trivy > push > deploy > verify
+                                  Jenkinsfile.bluegreen  detect colours > deploy idle > smoke test > switch > verify
